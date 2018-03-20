@@ -10,16 +10,45 @@ import UIKit
 
 class ViewController: UIViewController {
 
+    @IBOutlet weak var tempLbl: UILabel!
+    @IBOutlet weak var activitySpiner: UIActivityIndicatorView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        
+        activitySpiner.isHidden = true
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    @IBAction func getTempTapped(_ sender: Any) {
+        
+        activitySpinerAnimation(hidden: false)
+        
+        let helper = APIHelper()
+        helper.getTemp { (temp, success) in
+            if success {
+                
+                DispatchQueue.main.async {
+                    self.tempLbl.text = temp
+                    self.activitySpinerAnimation(hidden: true)
+                }
+            } else {
+                DispatchQueue.main.async {
+                    self.tempLbl.text = "No Data!"
+                }
+            }
+        }
+        
     }
-
+    
+    func activitySpinerAnimation(hidden: Bool) {
+        activitySpiner.isHidden = hidden
+        
+        if hidden {
+            activitySpiner.stopAnimating()
+        } else {
+            activitySpiner.startAnimating()
+        }
+    }
 
 }
 
